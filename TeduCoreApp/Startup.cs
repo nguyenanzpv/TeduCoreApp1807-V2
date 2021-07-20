@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,9 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TeduCoreApp.Application.Implementation;
+using TeduCoreApp.Application.Interfaces;
 using TeduCoreApp.Data;
 using TeduCoreApp.Data.Entities;
+using TeduCoreApp.Data.IRepositories;
 using TeduCoreApp.DataEF;
+using TeduCoreApp.DataEF.Repositories;
 
 namespace TeduCoreApp
 {
@@ -48,12 +53,22 @@ namespace TeduCoreApp
 
 
             // Add application services.
+
+            //lesson14
+            services.AddSingleton(Mapper.Configuration);
+            services.AddScoped<IMapper>(sp => new Mapper(sp.GetRequiredService<AutoMapper.IConfigurationProvider>(), sp.GetService));
+
             //lesson13
             services.AddScoped<UserManager<AppUser>, UserManager<AppUser>>();
             services.AddScoped<RoleManager<AppRole>, RoleManager<AppRole>>();
-
             services.AddTransient<IEmailSender, IEmailSender>();
             services.AddTransient<DbInitializer>();
+
+
+            //lesson 14
+            services.AddTransient<IProductCategoryRepository, ProductCategoryRepository>();
+            services.AddTransient<IProductCategoryService, ProductCategoryService>();
+
             services.AddMvc();
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
